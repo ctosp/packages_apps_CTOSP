@@ -20,26 +20,42 @@ import android.support.v7.preference.Preference.OnPreferenceChangeListener;
 import android.support.v14.preference.SwitchPreference;
 import android.provider.Settings;
 import com.android.settings.R;
-
+import com.ctosp.settings.preference.SystemSettingMasterSwitchPreference;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import com.android.settings.SettingsPreferenceFragment;
 
-public class MiscSettings extends SettingsPreferenceFragment implements
+
+public class MiscellaneousSettings extends SettingsPreferenceFragment implements
         OnPreferenceChangeListener {
+        
+        private static final String GAMING_MODE_ENABLED = "gaming_mode_enabled";
+
+        private SystemSettingMasterSwitchPreference mGamingMode;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        addPreferencesFromResource(R.xml.Ctosp_settings_misc);
+        addPreferencesFromResource(R.xml.Ctosp_settings_miscellaneous);
+        
+        mGamingMode = (SystemSettingMasterSwitchPreference) findPreference(GAMING_MODE_ENABLED);
+        mGamingMode.setChecked((Settings.System.getInt(getActivity().getContentResolver(),
+                Settings.System.GAMING_MODE_ENABLED, 0) == 1));
+        mGamingMode.setOnPreferenceChangeListener(this);
 
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object objValue) {
-
+        
+                } else if (preference == mGamingMode) {
+            boolean value = (Boolean) newValue;
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.GAMING_MODE_ENABLED, value ? 1 : 0);
+            return true;
+                }
         return false;
     }
 
